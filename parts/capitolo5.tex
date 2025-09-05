@@ -1,31 +1,237 @@
 \chapter{Esperimenti}
+\label{cap:Esperimenti}
+Gli esperimenti sono stati condotti seguendo i settaggi originali di AMEGO \cite{goletto2024amego}.  
+Di seguito vengono riportate le principali impostazioni utilizzate.
 
-- spiegare il setup degli esperimenti (pag. 10-11)
+Per l'identificazione delle interazioni mano-oggetto a livello di frame è stato utilizzato l'\emph{Hand-Object Interaction detector} \cite{shan2020understandinghumanhandscontact}.  
+Le feature visive degli oggetti sono state estratte tramite il modello pre-addestrato \emph{DINO-v2} \cite{oquab2024dinov2learningrobustvisual}, con ridimensionamento in fase di valutazione sulla versione \emph{ViT-L}.  
 
-- replica risultati epic kitchen
-    - descrizione macchina old
-        - dettagli tecnici
-    - costruzione dockerfiles
-        - amego
-        - epic kitchen download
-    - build dockerfile su vecchia macchina -> problema scheda video troppo vecchia
-    - passaggio alla nuova
-        - dettagli tecnici
-    - build docker files
-    - run scripts su epic (optical flow,hand object detection,interaction tracklets,location segments)
-        - descrizione cosa fanno questi file
-    
+Il tracciamento degli oggetti durante le interazioni è stato gestito tramite l'EgoSTARK tracker \cite{tang2023egotrackslongtermegocentricvisual}, con i seguenti parametri:
 
-- passaggio ad enigma
-    - scaricamento files
-        - frame
-        - annotazioni
-        - video (usati per estrarre i frame da usare negli script amego) (i frame scaricabili dal sito non erano tutti ma solo quelli annotati nel json)
+\begin{itemize}
+    \item $\theta = 0.6$: soglia di similarità per l'associazione dei bounding box.
+    \item $w_s = 30$: finestra temporale di frame utilizzata per garantire la coerenza spaziale.
+    \item $s_o = 20$: numero minimo di bounding box consecutivi con forte sovrapposizione spaziale richiesto per definire un tracklet.
+    \item $e_o = 20$: numero massimo di frame consecutivi senza rilevazioni associate prima di considerare un tracklet terminato, purché la mano rimanga visibile.
+\end{itemize}
 
-    - run scripts
+Come estrattore di feature per le location è stato utilizzato \emph{SWAG} \cite{singh2022revisitingweaklysupervisedpretraining}.
 
-    - creazione benchmark (spiegare come sono stati costruiti i json)
-        - q5
+L'\emph{optical flow} è stato stimato tramite il modello Flowformer \cite{huang2022flowformertransformerarchitectureoptical}, adottando i seguenti parametri:
 
-        - q6
-    
+\begin{itemize}
+    \item $\theta = 2000$: soglia applicata alla norma L2 dell'optical flow.
+    \item $s_l = 5$: numero minimo di frame consecutivi richiesti per considerare attivo un \emph{Location segment} $l_j$.
+    \item $e_l = 5$: numero massimo di frame consecutivi per cui si tollera che 
+    la norma dell'optical flow superi la soglia massima oppure che non vengano 
+    rilevate mani; se tale limite viene superato, il segmento $l_j$ viene terminato.
+    \item $\tau = 0.5$: soglia minima di similarità richiesta per assegnare un segmento $l_j$ a una location già esistente.
+\end{itemize}
+
+Di seguito vengono riportate le fasi principali di sperimentazione.
+
+Il notebook ed altre risorse che forniscono ulteriori dettagli sui lavori svolti sono disponibili nella repository GitHub del progetto: 
+\begin{center}
+    \footnotesize
+    \href{https://github.com/Kespers/Egocentric-Videos-Understanding-with-Active-Memory}{https://github.com/Kespers/Egocentric-Videos-Understanding-with-Active-Memory}
+\end{center}
+
+\section{Esperimenti su EPIC-KITCHENS}
+
+Per poter eseguire il progetto AMEGO in tutte le sue componenti, gli autori fornivano due ambienti \texttt{conda} separati, ciascuno con versioni di \texttt{python} e dipendenze differenti. In particolare:
+\begin{itemize}
+    \item l'ambiente \texttt{amego}, basato su \texttt{python 3.9}, necessario per lanciare gli script nativi del framework;
+    \item l'ambiente \texttt{handobj}, basato su \texttt{python 3.8}, per eseguire lo script di \emph{hand-object detection};
+\end{itemize}
+
+Il carico computazionale richiesto da questi task necessita dell'utilizzo di hardware apposito. Per questo motivo non è stato possibile condurre gli esperimenti su una macchina personale, ma si è fatto ricorso alle risorse messe a disposizione dal Dipartimento di Matematica e Informatica dell'Università di Catania.  
+
+In un contesto di questo tipo, è fondamentale garantire isolamento e riproducibilità degli ambienti di lavoro. Per questo motivo si è scelto di adottare un approccio basato su \emph{Docker}, integrando i due ambienti \texttt{conda} in un unico container.
+
+Il \texttt{Dockerfile} è stato strutturato partendo da \texttt{Ubuntu} come immagine di base. Su questa base è stato installato \emph{Miniconda}, impiegato come gestore principale degli ambienti virtuali, permettendo così di mantenere all'interno dello stesso container due ambienti \texttt{conda} separati.  
+È stata inoltre definita una directory di lavoro centrale, \texttt{/workspace/amego}, contenente il codice del progetto e gli script di setup. All'interno del container, nella directory \texttt{/workspace/ENIGMA-51}, è stata montata la partizione \texttt{/dataset/ENIGMA-51} del server, dove sono salvati tutti i dati del dataset, comprensivi di frame e annotazioni. 
+
+La build iniziale è stata tentata su una macchina fornita dall'Università di Catania, equipaggiata con GPU \textbf{Tesla K80} (CUDA 10.2). Tuttavia, la scheda video risulta troppo obsoleta e non supporta le versioni più recenti delle librerie necessarie.
+
+Per l'esecuzione degli esperimenti è stato utilizzato un server più recente, con le seguenti caratteristiche principali:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{ll}
+        \hline
+        \textbf{Componente} & \textbf{Specifiche principali} \\
+        \hline
+        CPU & Intel(R) Xeon(R) Silver 4210 @ 2.20GHz \\
+        GPUs & 3x Tesla V100S (32GB), 1x Tesla V100 (16GB) \\
+        \hline
+    \end{tabular}
+    \caption{Specifiche hardware utilizzato.}
+\end{table}
+
+
+Su questa infrastruttura, la build del container è andata a buon fine ed è stato possibile eseguire correttamente le procedure necessarie ad AMEGO.  
+
+In particolare, le operazioni principali sono state le seguenti:
+\begin{enumerate}
+    \item \textbf{Download del video di test:} è stato scaricato il video \texttt{P01\_01} del dataset EPIC-KITCHENS \cite{Damen2021PAMI} utilizzando gli script ufficiali forniti dai creatori del dataset \cite{epic_download_scripts}.
+    \item \textbf{Estrazione dei frame:} il video è stato convertito in sequenze di frame.
+    \item \textbf{Hand-object detection:} generazione dei bounding box relativi alle hand-object-detections per ciascun frame.
+    \item \textbf{Estrazione Optical flow}
+    \item \textbf{AMEGO HOI / Location Segments:} creazione delle componenti di memoria di AMEGO
+\end{enumerate}
+
+Dopo aver verificato il corretto funzionamento dell'intera pipeline, è stato quindi possibile passare agli esperimenti principali su ENIGMA-51.
+
+\section{Esperimenti su ENIGMA-51}
+
+Avendo accesso alla macchina dell'Università, è stata utilizzata una partizione di rete condivisa tra tutti gli utenti, sulla quale sono stati caricati i video del dataset ENIGMA-51, comprendenti tutti i frame necessari alle elaborazioni. Analogamente a quanto fatto per EPIC-KITCHENS, sono stati eseguiti gli script di AMEGO per estrarre le componenti indispensabili al funzionamento del metodo. 
+
+L'unica differenza principale ha riguardato la convenzione dei nomi dei file: i creatori di AMEGO, data la struttura dei loro loader, suggeriscono di organizzare i file secondo la seguente gerarchia:
+\begin{center}
+    \begin{verbatim}
+        <video_id>/
+            rgb_frames/
+                frame_0000000000.jpg
+                frame_0000000001.jpg
+                ...
+            flowformer/
+                flow_0000000000.pth
+                flow_0000000001.pth
+                ...
+            hand-objects/
+                <video_id>.pkl
+    \end{verbatim}    
+\end{center}
+
+Per quanto riguarda i frame RGB, è stato necessario rinominare i file. I frame di ENIGMA-51 hanno una risoluzione di \texttt{2272 x 1278} e sono forniti in un'unica cartella con il formato:
+\begin{center}
+\texttt{<VIDEO-ID>\_<FRAME-ID>.png}    
+\end{center}
+AMEGO, invece, si aspetta il naming sopra indicato, con frame ridimensionati a \texttt{456 x 256}. A tal fine è stato sviluppato uno script Python che ristruttura e ridimensiona correttamente tutti i file.
+
+A partire da questa riorganizzazione, è stato possibile eseguire in sequenza i vari script.
+
+Con queste basi è stato possibile creare i benchmark su cui testare la memoria. Come anticipato in precedenza, l'attenzione è stata posta sulle query di tipo \emph{concurrency}, in particolare sulla query Q5: ``What did I use with [VQ]?''. Inizialmente si era considerata anche la Q6, ma per motivi che saranno approfonditi in seguito, non è stato possibile includerla negli esperimenti.
+
+\section{Creazione del benchmark}
+
+Per la costruzione del benchmark su ENIGMA-51 sono state elaborato le annotazioni fornite per generare i file JSON richiesti da AMEGO per effettuare le query. 
+
+\subsection*{Q5}
+
+La query Q5 valuta la capacità del modello di riconoscere oggetti utilizzati simultaneamente con un altro oggetto. In particolare, la domanda è:
+
+\begin{quote}
+\textit{What did I use with [VQ]?}
+\end{quote}
+
+dove \texttt{[VQ]} indica un oggetto utilizzato contemporaneamente ad un altro durante un'interazione.
+
+Ogni query è strutturata come segue:
+
+\subsubsection*{Creazione struttura di base}
+\begin{itemize}
+    \item \textbf{id:} Identificativo univoco della domanda
+    \item \textbf{video\_id:} Identificativo del video di riferimento
+    \item \textbf{question:} Testo della domanda
+    \item \textbf{question\_image:} Crop del frame contenente l'oggetto VQ
+    \item \textbf{answers:} Cinque possibili risposte (oggetti o testi)
+    \item \textbf{correct:} ID della risposta corretta
+\end{itemize}
+
+\subsubsection*{Creazione risposte}
+Per generare le query, si è proceduto selezionando le annotazioni in cui erano presenti almeno due interazioni \emph{hand-object} simultanee con oggetti diversi. Il primo oggetto dell'interazione è stato utilizzato come \texttt{question\_image}, mentre le risposte sono state composte includendo:
+
+\begin{itemize}
+    \item \textbf{RISPOSTA CORRETA}: secondo oggetto dell'interazione;
+    \item \textbf{RISPOSTE ERRATE}: vengono presi gli altri oggetti presenti nella scena. Se gli oggetti disponibili sono meno di quattro, si completava il set con oggetti scelti casualmente tra quelli presenti nel video.
+\end{itemize}
+
+\subsubsection*{Tre versioni per ogni oggetto}
+Per ogni oggetto sono state selezionate tre immagini differenti, temporalmente distinte di almeno 0,5 secondi l'una dall'altra, per mostrare diverse pose e ridurre gli effetti di occlusione tipici della visione egocentrica, ad esempio dovuti alle mani del soggetto o ad altri oggetti.
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}[b]{0.32\linewidth}
+        \includegraphics[width=\linewidth]{Images/enigma_am_IMGVER1.jpg}
+        \caption{}
+        \label{fig:imgver1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\linewidth}
+        \includegraphics[width=\linewidth]{Images/enigma_am_IMGVER2.jpg}
+        \caption{}
+        \label{fig:imgver2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\linewidth}
+        \includegraphics[width=\linewidth]{Images/enigma_am_IMGVER3.jpg}
+        \caption{}
+        \label{fig:imgver3}
+    \end{subfigure}
+    \caption{Versioni create per l'oggetto cacciavite}
+    \label{fig:enigma_am_screwdrivers}
+\end{figure}
+
+\subsubsection*{Conversione formato bounding box}
+Infine, è stata effettuata una conversione del formato dei bounding box: le annotazioni originali fornivano i box come 
+\begin{center}
+\([x_\text{min}, y_\text{min}, \text{width}, \text{height}]\)
+\end{center},
+
+mentre AMEGO richiede:
+\begin{center}
+\([x_\text{min}, y_\text{min}, x_\text{max}, y_\text{max}]\)
+\end{center}
+
+Dopo questa operazione è stato quindi generato il file json per fare partire la query.
+
+\subsection*{Q6}
+La query Q6 avrebbe testato la capacità del modello di identificare le location in cui è stato utilizzato un oggetto, tramite la domanda:
+
+\begin{quote}
+\textit{Where did I use [VQ]?}
+\end{quote}
+
+Tuttavia, le annotazioni di ENIGMA non fornivano informazioni sufficienti sulla posizione dei soggetti nei frame. Inizialmente si era pensato di estrarre parole chiave dai file testuali delle procedure per inferire possibili location, ma il numero limitato di location disponibili e l'assenza di corrispondenza con i frame annotati hanno reso la sperimentazione non praticabile. Di conseguenza, il lavoro si è concentrato esclusivamente sulla query Q5.
+
+\section{Ulteriori analisi}
+\subsection*{Tempi di esecuzione}
+
+Di seguito sono riportati i tempi approssimativi di esecuzione dei vari script, eseguiti in sequenza sul test-set ENIGMA-51.
+Si nota come la fase più dispendiosa sia l'estrazione delle hand-object detections e dell'optical flow, che richiedono circa 30 ore di calcolo (Tabella~\ref{tab:tempi}).
+
+\begin{table}[ht]
+    \centering
+    \caption{Tempi di elaborazione dei vari script}
+    \begin{tabular}{|l|c|}
+        \hline
+        \textbf{Script} & \textbf{Tempo} \\
+        \hline
+        HOI & $\approx$ 30h \\
+        OPTICAL FLOW & $\approx$ 30h \\
+        AMEGO HOI TRACKLETS & $\approx$ 26h \\
+        LOCATION SEGMENTS & $\approx$ 8h \\
+        Q5 QUERY & $\approx$ 30min \\
+        \hline
+    \end{tabular}
+    \label{tab:tempi}
+\end{table}
+
+\subsection*{Creazione video}
+
+Per avere una visione d'insieme della memoria creata da AMEGO, è stato realizzato uno script che, dato un video, raggruppa i vari HOI tracklets trovati e li sovrappone con i rispettivi bounding.
+Come mostrato in Fig.~\ref{fig:amego_video}, nella parte superiore del video sono visualizzate informazioni generali sul tipo di video e sul frame corrente. Al centro scorrono i frame con disegnati i bounding box dei vari HOI, ciascuno caratterizzato da un colore assegnato univocamente a ogni cluster.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Images/amego_video.jpg}
+    \caption{visualizzazione degli HOI tracklet del video 66 }
+    \label{fig:amego_video}
+\end{figure}
+
+Al di sotto del video, una tabella mostra alcune informazioni chiave sugli HOI tracklets visualizzati. In particolare, si riporta il \textbf{Track ID}, il \textbf{Cluster} associato con indicazione dell'ID e del colore univoco, il numero di frame rimanenti in cui il tracklet è ancora attivo (\textit{Time Left Active}) e il numero di frame prima che il tracklet diventi attivo (\textit{Time to be Active}).
+
+Osservando Fig.~\ref{fig:amego_video}, si nota un overlap tra le istanze \texttt{8} e \texttt{9}, presumibilmente corrispondenti rispettivamente a board e cacciaviti. In query che coinvolgono questi oggetti, i relativi tracklet verranno quindi considerati dal modello.
+
+Lo script utilizzato per generare il video è disponibile nella repository GitHub del progetto.

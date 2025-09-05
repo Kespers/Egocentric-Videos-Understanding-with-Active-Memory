@@ -1,2 +1,14 @@
 \chapter*{Conclusione} %l'asterisco dopo chapter serve per visualizzare il capitolo come "non numerato"
-\addcontentsline{toc}{chapter}{Conclusione} %per fare inserire il capitolo nella tabella dei contenuti
+\addcontentsline{toc}{chapter}{Conclusione} %per fare inserire il 
+
+In questa tesi abbiamo analizzato l'importanza dei video egocentrici come strumento per comprendere e modellare il comportamento umano in diversi contesti. Una rappresentazione strutturata di tali dati consente di catturare le interazioni tra attori e oggetti.
+
+A tal fine, è stato introdotto AMEGO~\cite{goletto2024amego}, un framework \emph{semantic-free} per la rappresentazione di Human-Object Interaction in video egocentrici, che consente di generare una memoria attiva di oggetti e interazioni senza fare affidamento su etichette semantiche predefinite. Sono stati descritti i componenti principali del modello e il benchmark creato ad hoc, con particolare attenzione al task di \emph{query sequencing}.
+
+Per valutare queste capacità semantic-free, si è utilizzato il dataset industriale ENIGMA-51~\cite{ragusa2023enigma51}, adattandolo per creare un insieme di test coerente con il benchmark di AMEGO. I risultati sperimentali hanno evidenziato alcuni limiti del modello, in particolare nella gestione di scenari industriali, dove oggetti visivamente simili ma semanticamente differenti (ad esempio diversi tipi di cacciaviti o componenti elettrici) vengono talvolta raggruppati come un'unica istanza. Questo mette in luce la necessità di un approccio più robusto per l'assegnazione delle istanze degli oggetti, fondamentale per migliorare l'affidabilità.
+
+Un possibile miglioramento riguarda l'addestramento dei modelli di estrazione di feature e di hand-object detection. In modo da aumentare la capacità di distinguere oggetti simili tra loro e di riconoscere dettagli a diversi livelli di precisione, migliorando così l’accuratezza complessiva dell’analisi. Altri spunti includono l’uso di frame ad alta risoluzione, che pur essendo più onerosi computazionalmente, potrebbero migliorare la rilevazione dei dettagli critici degli oggetti.
+
+Nonostante questi limiti, AMEGO rappresenta una solida base per lo studio dei video egocentrici, fornendo strumenti utili per testare diversi tipi di query. Tra queste, la Q5 si è rivelata la più sfidante, risultando in generale quella con i punteggi più bassi anche nelle valutazioni originali. Come sviluppi futuri, si potrebbero innanzitutto esplorare le altre tipologie di query e, successivamente, valutare il comportamento del modello su dataset provenienti da contesti diversi, con l'obiettivo di migliorare la consistenza e la capacità di adattarsi a contesti differenti.
+
+
