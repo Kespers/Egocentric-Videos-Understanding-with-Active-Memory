@@ -1,19 +1,30 @@
 \documentclass[12pt,a4paper,openany,oneside]{book}
+
 \usepackage{algpseudocode}
 \usepackage{algorithm}
 \usepackage{hyperref}
+\usepackage{tikz}     
+\usepackage{pgf-pie}  
+\usepackage{subcaption}
 \usepackage[italian]{babel}
-
-%\usepackage[latin1]{inputenc} %Windows
-\usepackage[utf8x]{inputenc} %Linux
-%\usepackage[applemac]{inputenc} %Mac
-
+\usepackage{placeins}
+\usepackage[table]{xcolor}  
+\usepackage{graphicx}       
+\usepackage{array}          
+\usepackage[utf8x]{inputenc}
 \usepackage{graphicx}
 \usepackage[font=small,labelfont=bf,tableposition=top]{caption}
-
 \usepackage{listings}
-  \usepackage{courier}
- \lstset{
+\usepackage{courier}
+\usepackage{amsmath}
+\usepackage{framed}
+\usepackage{xcolor}
+\usepackage{multirow}
+\usepackage[table]{xcolor}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\lstset{
          language=C++,
          basicstyle=\footnotesize\ttfamily,
          numbers=left,           
@@ -31,22 +42,13 @@
          framexrightmargin=5pt,
          framexbottommargin=4pt,
          showstringspaces=false          
- }
+}
  
- \addto\captionsitalian{%
- 	\renewcommand{\lstlistingname}{Codice}}
+\addto\captionsitalian{\renewcommand{\lstlistingname}{Codice}}
 
 \setcounter{tocdepth}{3} % fa apparire le subsubsection nell'indice
 \setcounter{secnumdepth}{3} % e le numera
 
-
-\usepackage{amsmath}
-
-
-\usepackage{framed}
-\usepackage{xcolor}
-\usepackage{multirow}
-\usepackage[table]{xcolor} % per definire i colori
 \definecolor{sqcolor}{HTML}{789ECC}
 \definecolor{cocolor}{HTML}{C23A21}
 \definecolor{tgcolor}{HTML}{02BF3D}

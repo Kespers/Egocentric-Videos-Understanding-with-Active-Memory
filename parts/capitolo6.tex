@@ -7,7 +7,7 @@ In principio AMEGO è stato valutato sul dataset EPIC-KITCHENS, confrontando le 
     
     \item \textbf{SF-QA (obj)} è una variante di SF-QA che include anche le feature visive degli oggetti attivi rilevati da \cite{shan2020understandinghumanhandscontact}.
     
-    \item \textbf{Semantic QA (S-QA)} sfrutta "captioner" pre-addestrati per generare un sommario semantico del video. Si usano LaViLa \cite{zhao2022learningvideorepresentationslarge} per il video egocentrico e BLIP-2 \cite{li2023blip2bootstrappinglanguageimagepretraining} per i patch della query. Le caption vengono poi passate a LLaMA-2-7B \cite{touvron2023llama2openfoundation} per rispondere alle domande. Se il testo supera i 4096 token, viene sottocampionato.
+    \item \textbf{Semantic QA (S-QA)} sfrutta \emph{captioner} pre-addestrati per generare un sommario semantico del video. Si usano LaViLa \cite{zhao2022learningvideorepresentationslarge} per il video egocentrico e BLIP-2 \cite{li2023blip2bootstrappinglanguageimagepretraining} per i patch della query. Le caption vengono poi passate a LLaMA-2-7B \cite{touvron2023llama2openfoundation} per rispondere alle domande. Se il testo supera i 4096 token, viene sottocampionato.
     
     \item \textbf{Multi-round semantic QA (LLoVi)} \cite{zhang2024simplellmframeworklongrange} funziona in due round: prima sintetizza le caption del video alla luce della domanda, poi risponde alla query usando il sommario generato.
 \end{itemize}
@@ -97,11 +97,7 @@ Si osservano risultati non sempre soddisfacenti: in alcuni video l'accuracy scen
 mentre in altri supera sensibilmente le prestazioni riportate su EPIC-KITCHENS. 
 Analizzando le percentuali per ogni domanda si evidenzia che \textbf{203} query hanno totalizzato accuracy nulla. 
 Per approfondire la natura dei risultati, si analizza la query \texttt{Q5\_000089}, scelta come caso esemplificativo per evidenziare la criticità principale riscontrata.
-In questo caso la \emph{Visual Query (VQ)} è:  
-
-\begin{center}
-\textbf{\texttt{low\_voltage\_board}}
-\end{center}
+In questo caso la \emph{Visual Query (VQ)} è: \textbf{\texttt{low\_voltage\_board}}
 
 Le cinque risposte candidate associate sono:  
 
@@ -117,10 +113,7 @@ Le cinque risposte candidate associate sono:
 \end{tabular}
 \end{center}
 
-Nel benchmark, la risposta marcata come corretta è:  
-\begin{center}
-\textbf{\texttt{screwdriver}}
-\end{center}
+Nel benchmark, la risposta marcata come corretta è: \textbf{\texttt{screwdriver}}
 
 \begin{figure}[ht]
     \centering
@@ -137,12 +130,12 @@ Nel benchmark, la risposta marcata come corretta è:
 
 \begin{table}[ht]
     \centering
-    \caption{\raggedright Risposte per la query \texttt{Q5\_000089}: per ogni classe sono mostrate tre versioni. La riga della classe corretta (\texttt{screwdriver}) è evidenziata con bordo verde spesso. Ordine delle righe: 
+    \caption{\raggedright Risposte per la query \texttt{Q5\_000089}: per ogni classe sono mostrate tre versioni. Ordine delle righe: 
     (1) \texttt{high\_voltage\_board}, 
     (2) \texttt{oscilloscope\_probe\_tip}, 
-    (3) \texttt{electric\_screwdriver\_battery}, 
-    (4) \texttt{screwdriver}, 
-    (5) \texttt{power\_supply\_cables}.}
+    (3) \texttt{electric\_screwdriver\_battery},
+    \textbf{(4) \texttt{screwdriver} [CORRETTA]}, 
+    (5) \texttt{power\_supply\_cables}}
     \label{fig:answers_zero_acc}
     
     \renewcommand{\arraystretch}{1.15}  % altezza riga

@@ -30,13 +30,13 @@ L'\emph{optical flow} è stato stimato tramite il modello Flowformer \cite{huang
 
 Di seguito vengono riportate le fasi principali di sperimentazione.
 
-Il notebook ed altre risorse che forniscono ulteriori dettagli sui lavori svolti sono disponibili nella repository GitHub del progetto: 
+Il notebook e altre risorse che forniscono ulteriori dettagli sui lavori svolti sono disponibili nella repository GitHub del progetto: 
 \begin{center}
     \footnotesize
     \href{https://github.com/Kespers/Egocentric-Videos-Understanding-with-Active-Memory}{https://github.com/Kespers/Egocentric-Videos-Understanding-with-Active-Memory}
 \end{center}
 
-\section{Esperimenti su EPIC-KITCHENS}
+\section{Setup ambiente}
 
 Per poter eseguire il progetto AMEGO in tutte le sue componenti, gli autori fornivano due ambienti \texttt{conda} separati, ciascuno con versioni di \texttt{python} e dipendenze differenti. In particolare:
 \begin{itemize}
@@ -49,11 +49,11 @@ Il carico computazionale richiesto da questi task necessita dell'utilizzo di har
 In un contesto di questo tipo, è fondamentale garantire isolamento e riproducibilità degli ambienti di lavoro. Per questo motivo si è scelto di adottare un approccio basato su \emph{Docker}, integrando i due ambienti \texttt{conda} in un unico container.
 
 Il \texttt{Dockerfile} è stato strutturato partendo da \texttt{Ubuntu} come immagine di base. Su questa base è stato installato \emph{Miniconda}, impiegato come gestore principale degli ambienti virtuali, permettendo così di mantenere all'interno dello stesso container due ambienti \texttt{conda} separati.  
-È stata inoltre definita una directory di lavoro centrale, \texttt{/workspace/amego}, contenente il codice del progetto e gli script di setup. All'interno del container, nella directory \texttt{/workspace/ENIGMA-51}, è stata montata la partizione \texttt{/dataset/ENIGMA-51} del server, dove sono salvati tutti i dati del dataset, comprensivi di frame e annotazioni. 
+È stata inoltre definita una directory di lavoro centrale, \texttt{/workspace/amego}, contenente il codice del progetto e gli script di setup. All'interno del container, nella directory \texttt{/workspace/ENIGMA-51}, è stata montata la partizione \texttt{/dataset/ENIGMA-51} del server, contenente l'intero contenuto del dataset, inclusi frame e annotazioni.
 
-La build iniziale è stata tentata su una macchina fornita dall'Università di Catania, equipaggiata con GPU \textbf{Tesla K80} (CUDA 10.2). Tuttavia, la scheda video risulta troppo obsoleta e non supporta le versioni più recenti delle librerie necessarie.
+La build iniziale è stata tentata su una macchina equipaggiata con GPU \textbf{Tesla K80}. Tuttavia, la scheda video risulta troppo obsoleta e non supporta le versioni più recenti delle librerie necessarie.
 
-Per l'esecuzione degli esperimenti è stato utilizzato un server più recente, con le seguenti caratteristiche principali:
+Per l'esecuzione degli esperimenti è stato utilizzato un server con risorse più recenti, di seguito sono riportate le caratteristiche principali:
 
 \begin{table}[H]
     \centering
@@ -78,15 +78,17 @@ In particolare, le operazioni principali sono state le seguenti:
     \item \textbf{Hand-object detection:} generazione dei bounding box relativi alle hand-object-detections per ciascun frame.
     \item \textbf{Estrazione Optical flow}
     \item \textbf{AMEGO HOI / Location Segments:} creazione delle componenti di memoria di AMEGO
+    \item \textbf{Query:} esecuzione delle query AMB
 \end{enumerate}
 
 Dopo aver verificato il corretto funzionamento dell'intera pipeline, è stato quindi possibile passare agli esperimenti principali su ENIGMA-51.
 
-\section{Esperimenti su ENIGMA-51}
+\section{AMB su ENIGMA-51}
 
-Avendo accesso alla macchina dell'Università, è stata utilizzata una partizione di rete condivisa tra tutti gli utenti, sulla quale sono stati caricati i video del dataset ENIGMA-51, comprendenti tutti i frame necessari alle elaborazioni. Analogamente a quanto fatto per EPIC-KITCHENS, sono stati eseguiti gli script di AMEGO per estrarre le componenti indispensabili al funzionamento del metodo. 
+Analogamente a quanto fatto per EPIC-KITCHENS, sono stati eseguiti gli script di AMEGO per estrarre le componenti indispensabili al funzionamento del metodo. La differenza è l'uso della partizione montata che ha agevolato la parte di estrazione frame in quanto erano già forniti.
 
-L'unica differenza principale ha riguardato la convenzione dei nomi dei file: i creatori di AMEGO, data la struttura dei loro loader, suggeriscono di organizzare i file secondo la seguente gerarchia:
+\subsection*{Elaborazione files}
+Un primo lavoro ha riguardato la strutturazione delle cartelle. Data la struttura loader usati da AMEGO, è suggerita la seguente organizzazione:
 \begin{center}
     \begin{verbatim}
         <video_id>/
@@ -103,19 +105,17 @@ L'unica differenza principale ha riguardato la convenzione dei nomi dei file: i 
     \end{verbatim}    
 \end{center}
 
-Per quanto riguarda i frame RGB, è stato necessario rinominare i file. I frame di ENIGMA-51 hanno una risoluzione di \texttt{2272 x 1278} e sono forniti in un'unica cartella con il formato:
+In ENIGMA i frame dei video sono forniti in un'unica cartella con il formato:
 \begin{center}
-\texttt{<VIDEO-ID>\_<FRAME-ID>.png}    
+\texttt{\textbf{<VIDEO-ID>}\_\textbf{<FRAME-ID>}.png}    
 \end{center}
-AMEGO, invece, si aspetta il naming sopra indicato, con frame ridimensionati a \texttt{456 x 256}. A tal fine è stato sviluppato uno script Python che ristruttura e ridimensiona correttamente tutti i file.
+Inoltre la risoluzione fornita è \texttt{2272 x 1278}, mentre AMEGO si aspetta \texttt{456 x 256}. A tal proposito è stato sviluppato uno script Python che ristruttura e ridimensiona correttamente tutti i file.
 
 A partire da questa riorganizzazione, è stato possibile eseguire in sequenza i vari script.
 
-Con queste basi è stato possibile creare i benchmark su cui testare la memoria. Come anticipato in precedenza, l'attenzione è stata posta sulle query di tipo \emph{concurrency}, in particolare sulla query Q5: ``What did I use with [VQ]?''. Inizialmente si era considerata anche la Q6, ma per motivi che saranno approfonditi in seguito, non è stato possibile includerla negli esperimenti.
+Con queste basi è stato possibile creare i benchmark su cui testare la memoria. Come anticipato in precedenza, l'attenzione è stata posta sulle query di tipo \textbf{concurrency}, in particolare sulla query Q5: ``What did I use with [VQ]?''. Inizialmente si era considerata anche la Q6, ma per motivi che saranno approfonditi in seguito, non è stato possibile includerla negli esperimenti.
 
-\section{Creazione del benchmark}
-
-Per la costruzione del benchmark su ENIGMA-51 sono state elaborato le annotazioni fornite per generare i file JSON richiesti da AMEGO per effettuare le query. 
+Per la costruzione del benchmark su ENIGMA-51, le annotazioni disponibili sono state rielaborate al fine di generare i file JSON richiesti da \emph{AMEGO} per l'esecuzione delle query.
 
 \subsection*{Q5}
 
@@ -125,7 +125,7 @@ La query Q5 valuta la capacità del modello di riconoscere oggetti utilizzati si
 \textit{What did I use with [VQ]?}
 \end{quote}
 
-dove \texttt{[VQ]} indica un oggetto utilizzato contemporaneamente ad un altro durante un'interazione.
+dove \texttt{[VQ]} indica un oggetto utilizzato contemporaneamente a un altro durante un'interazione.
 
 Ogni query è strutturata come segue:
 
@@ -135,7 +135,7 @@ Ogni query è strutturata come segue:
     \item \textbf{video\_id:} Identificativo del video di riferimento
     \item \textbf{question:} Testo della domanda
     \item \textbf{question\_image:} Crop del frame contenente l'oggetto VQ
-    \item \textbf{answers:} Cinque possibili risposte (oggetti o testi)
+    \item \textbf{answers:} Cinque possibili risposte
     \item \textbf{correct:} ID della risposta corretta
 \end{itemize}
 
@@ -143,12 +143,12 @@ Ogni query è strutturata come segue:
 Per generare le query, si è proceduto selezionando le annotazioni in cui erano presenti almeno due interazioni \emph{hand-object} simultanee con oggetti diversi. Il primo oggetto dell'interazione è stato utilizzato come \texttt{question\_image}, mentre le risposte sono state composte includendo:
 
 \begin{itemize}
-    \item \textbf{RISPOSTA CORRETA}: secondo oggetto dell'interazione;
-    \item \textbf{RISPOSTE ERRATE}: vengono presi gli altri oggetti presenti nella scena. Se gli oggetti disponibili sono meno di quattro, si completava il set con oggetti scelti casualmente tra quelli presenti nel video.
+    \item \textbf{RISPOSTA CORRETTA}: secondo oggetto dell'interazione;
+    \item \textbf{RISPOSTE ERRATE}: vengono utilizzate le \textbf{classi} degli altri oggetti presenti nella scena come riferimento per selezionare lo stesso oggetto in altri punti dello \emph{stesso} video (aspetto importante, poiché non è garantito che in video diversi compaiano gli stessi oggetti). Se gli oggetti generati nelle risposte sono meno di quattro, il set viene completato con classi scelte casualmente.
 \end{itemize}
 
 \subsubsection*{Tre versioni per ogni oggetto}
-Per ogni oggetto sono state selezionate tre immagini differenti, temporalmente distinte di almeno 0,5 secondi l'una dall'altra, per mostrare diverse pose e ridurre gli effetti di occlusione tipici della visione egocentrica, ad esempio dovuti alle mani del soggetto o ad altri oggetti.
+Per ogni classe sono state selezionate tre patch differenti, temporalmente distinte di almeno 0,5 secondi l'una dall'altra, per mostrare diverse pose e ridurre gli effetti di occlusione tipici della visione egocentrica, ad esempio dovuti alle mani del soggetto o ad altri oggetti.
 
 \begin{figure}[ht]
     \centering
@@ -195,7 +195,7 @@ La query Q6 avrebbe testato la capacità del modello di identificare le location
 
 Tuttavia, le annotazioni di ENIGMA non fornivano informazioni sufficienti sulla posizione dei soggetti nei frame. Inizialmente si era pensato di estrarre parole chiave dai file testuali delle procedure per inferire possibili location, ma il numero limitato di location disponibili e l'assenza di corrispondenza con i frame annotati hanno reso la sperimentazione non praticabile. Di conseguenza, il lavoro si è concentrato esclusivamente sulla query Q5.
 
-\section{Ulteriori analisi}
+\section{Analisi}
 \subsection*{Tempi di esecuzione}
 
 Di seguito sono riportati i tempi approssimativi di esecuzione dei vari script, eseguiti in sequenza sul test-set ENIGMA-51.

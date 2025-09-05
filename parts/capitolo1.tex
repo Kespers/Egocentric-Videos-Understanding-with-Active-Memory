@@ -1,39 +1,36 @@
 \chapter{Introduzione}
 
-Negli ultimi anni i dispositivi indossabili per la registrazione di video in prima persona hanno conosciuto una diffusione sempre più ampia. Strumenti come \emph{smart glasses}, \emph{body cameras}, \emph{action cameras} hanno reso possibile la cattura di flussi visivi continui dal punto di vista diretto dell'utilizzatore, dando origine a quella che viene comunemente definita come \emph{egocentric video}. Questa modalità di acquisizione ha suscitato un forte interesse \cite{NUNEZMARCOS2022175} non solo per le applicazioni pratiche, che spaziano dall'intrattenimento personale alla sicurezza e al monitoraggio di attività lavorative, ma anche per le sfide che pone in termini di analisi e interpretazione dei contenuti.
+Negli ultimi anni i dispositivi indossabili per la registrazione di video in prima persona hanno conosciuto una diffusione sempre più ampia. Strumenti come \emph{smart glasses}, \emph{body cameras}, \emph{action cameras} hanno reso possibile la cattura di flussi video continui dal punto di vista dell'utilizzatore, dando origine a quello che viene comunemente definito come \emph{egocentric video}. Ciò che li rende peculiari è la loro capacità di catturare dettagli e prospettive uniche, fornendo una visione diretta dell'attività di chi li indossa.
 
 \begin{figure}[ht]
     \centering
     \begin{minipage}{0.3\linewidth}
         \centering
         \includegraphics[width=\linewidth]{Images/meta_glass.png}\\
-        (a) Smart glasses
+        Smart glasses
     \end{minipage}
     \hfill
     \begin{minipage}{0.3\linewidth}
         \centering
         \includegraphics[width=\linewidth]{Images/gopro.png}\\
-        (b) Action camera
+        Action camera
     \end{minipage}
     \hfill
     \begin{minipage}{0.3\linewidth}
         \centering
         \includegraphics[width=\linewidth]{Images/bodycamera.png}\\
-        (c) Body camera
+        Body camera
     \end{minipage}
     \caption{Esempi di dispositivi indossabili per la cattura di video egocentrici}
     \label{fig:dispositivi_egocentrici}
 \end{figure}
 
-L'adozione di tali dispositivi è stata favorita dalla loro versatilità: da un lato vengono utilizzati per scopi ricreativi e per la condivisione di esperienze personali, dall'altro trovano applicazione in contesti professionali e industriali, dove consentono di documentare procedure complesse e migliorare i processi di formazione e supervisione. Ciò che rende peculiari i video egocentrici è la loro capacità di catturare dettagli e prospettive uniche, fornendo una visione diretta dell'attività di chi li indossa.
+L'adozione crescente di tali dispositivi è stata favorita dalla loro versatilità: da un lato vengono utilizzati per scopi ricreativi e per la condivisione di esperienze personali, dall'altro trovano applicazione in contesti professionali e industriali, dove consentono di documentare procedure complesse e migliorare i processi di formazione e supervisione.
 
 Il principale ostacolo all'analisi di questi contenuti risiede nella loro natura non strutturata. I video in prima persona possono essere considerati come veri e propri flussi di coscienza visivi: lunghi, frammentati, privi di un'organizzazione narrativa chiara e difficili da interpretare. La presenza di movimenti rapidi della fotocamera, variazioni di illuminazione e interazioni simultanee con più oggetti rende complicata l'estrazione di significato. Un'annotazione manuale completa non è praticabile, sia per la mole di dati prodotta sia per la complessità dei contenuti.
 
-Da questa problematica emerge la necessità di costruire una “memoria artificiale” capace di trasformare i video egocentrici in rappresentazioni strutturate e interrogabili. Questa tesi prende avvio dall'analisi dei principali contributi degli elementi che vanno a formare un eventuale memoria artificiale, per poi focalizzarsi su AMEGO \cite{goletto2024amego}, acronimo di \emph{Active Memory of the EGOcentric video}, un sistema sviluppato per organizzare e rendere interrogabili i contenuti visivi in prima persona e attualmente considerato stato dell'arte nel suo ambito \cite{goletto2024amego}.
+Da questa problematica emerge la necessità di costruire una “memoria artificiale” in grado di trasformare i video egocentrici in una rappresentazione più organizzata e interpretabile. In questa tesi analizzeremo innanzitutto i principali contributi presenti in letteratura, per poi concentrarci su \textsc{AMEGO}\cite{goletto2024amego}, un sistema sviluppato per strutturare e rendere interrogabili i video egocentrici e attualmente considerato stato dell'arte nel suo ambito \cite{goletto2024amego}.
 
-Il contributo di questo lavoro consiste nella valutazione di AMEGO in un contesto diverso rispetto a quello in cui è stato originariamente validato. Inizialmente il sistema è stato sperimentato sul dataset \emph{ EPIC KITCHENS }\cite{Damen2021PAMI}, una collezione di video ambientati in cucine domestiche. In questa tesi, invece, viene preso in esame il dataset \emph{ENIGMA-51} \cite{ragusa2023enigma51}, un dataset egocentrico acquisito in scenari industriali, in cui diversi operatori hanno seguito procedure guidate per eseguire attività di riparazione di quadri elettrici. La differenza tra i due domini rende lo studio particolarmente interessante, in quanto consente di valutare la capacità di AMEGO di generalizzare a contesti applicativi mai visti.
+Durante la fase sperimentale, valuteremo \textsc{AMEGO} in un contesto diverso da quello in cui era stato testato. Nel lavoro originale è stato valutato sul dataset \emph{EPIC KITCHENS} \cite{Damen2021PAMI}, costituito da video ambientati in cucine domestiche. In questa tesi, invece, l'analisi si concentra sul dataset \emph{ENIGMA-51} \cite{ragusa2023enigma51}, acquisito in contesti industriali, in cui diversi operatori hanno seguito procedure guidate per eseguire attività di riparazione di quadri elettrici. La differenza tra i due domini rende lo studio particolarmente interessante, in quanto consente di valutare la capacità di AMEGO di generalizzare a contesti applicativi mai visti.
 
-In ambito industriale, l'analisi dei video egocentrici e la gestione della concurrency assumono un ruolo fondamentale per ottimizzare diversi aspetti operativi. Da un lato, garantire che le operazioni vengano eseguite nell'ordine corretto permette di ottimizzare i flussi produttivi e di ridurre il rischio di errori umani, migliorando così l'affidabilità e la coerenza delle procedure. Dall'altro, il monitoraggio in tempo reale consente di incrementare la sicurezza dei lavoratori, ad esempio verificando l'uso corretto dei dispositivi di protezione individuale (DPI) oppure la corretta collocazione di componenti critici nelle aree opportune.
-
-Un aspetto centrale analizzato in questo lavoro riguarda la gestione della \emph{concurrency}, intesa come la capacità di riconoscere non solo con quali altri oggetti un determinato strumento viene utilizzato in simultanea, ma anche in quali contesti o aree operative tale oggetto viene impiegato.
-Nei capitoli successivi verranno prima esaminati gli strumenti e le metodologie attualmente presenti in letteratura, che costituiscono le basi per lo sviluppo di sistemi di memoria artificiale per video egocentrici. Successivamente saranno illustrate nel dettaglio le caratteristiche di AMEGO \cite{goletto2024amego} e le sperimentazioni condotte sul dataset ENIGMA-51 \cite{ragusa2023enigma51}, con l'obiettivo di valutare fino a che punto il sistema possa essere adattato a contesti applicativi diversi da quelli per cui è stato originariamente progettato.
+In ambito industriale, l'analisi dei video egocentrici è fondamentale per ottimizzare vari aspetti operativi. Garantire ad esempio che le operazioni vengano eseguite nell'ordine corretto migliora i flussi produttivi e riduce il rischio di errori umani. Inoltre, la capacità di riconoscere quali strumenti vengono utilizzati contemporaneamente ad altri oggetti, soprattutto se potenzialmente pericolosi, contribuisce a migliorare la sicurezza dei lavoratori. Quest'ultimo tema prende il nome di \textbf{concurrency}. Sarà di centrale importanza nella fase sperimentale.

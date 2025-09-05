@@ -1,12 +1,12 @@
 \chapter{Dataset}
 
-I dataset utilizzati in questo lavoro sono due: \emph{EPIC-KITCHENS} \cite{Damen2021PAMI}, utilizzato nativamente da AMEGO per la costruzione del benchmark discusso in precedenza (AMB), ed \emph{ENIGMA-51} \cite{ragusa2023enigma51}, oggetto principale del lavoro di tesi e rifinito nel formato AMEGO per valutare il metodo su un contesto differente.
+I dataset utilizzati in questo lavoro sono due: \emph{EPIC-KITCHENS} \cite{Damen2021PAMI}, utilizzato nativamente da AMEGO per la costruzione del benchmark discusso in precedenza (AMB), ed \emph{ENIGMA-51} \cite{ragusa2023enigma51}, oggetto principale del lavoro di tesi e rifinito per valutare il metodo su un contesto differente.
 
 \section{EPIC-KITCHENS}
 EPIC-KITCHENS è un dataset egocentrico raccolto in contesti domestici di cucina. Contiene registrazioni video di attività quotidiane svolte da singoli individui in cucina, con annotazioni di azioni e oggetti coinvolti. 
 
 \subsection*{Collezione dei dati}
-Il dataset è stato registrato da 32 partecipanti, ciascuno dei quali ha documentato tutte le visite in cucina. Le registrazioni iniziavano immediatamente prima dell'ingresso in cucina e terminavano appena prima dell'uscita. I partecipanti erano soli in cucina durante le registrazioni, in modo da catturare esclusivamente attività di una singola persona.  
+Il dataset è stato registrato da 32 partecipanti, ciascuno dei quali ha documentato tutte le visite in cucina. Le registrazioni iniziano immediatamente prima dell'ingresso in cucina e terminano appena prima dell'uscita. I partecipanti sono soli in cucina durante le registrazioni, in modo da catturare esclusivamente attività di una singola persona.  
 
 La cattura dei dati è stata effettuata mediante una GoPro montata in testa, con un supporto regolabile per adattarsi all'altezza dei diversi soggetti e all'ambiente.  
 
@@ -16,7 +16,7 @@ La cattura dei dati è stata effettuata mediante una GoPro montata in testa, con
     \caption{Modalità di ripresa con GoPro montata in testa}
 \end{figure}
 
-Le riprese sono in risoluzione Full HD di 1920x1080 a 59.94 fps. Alcune registrazioni avevano risoluzioni o frame rate differenti: 1\% a 1280x720, 0.5\% a 1920x1440, 1\% a 30 fps, 1\% a 48 fps e 0.2\% a 90 fps.
+Le riprese sono in risoluzione Full HD di 1920x1080 a 59.94 fps. Alcune registrazioni hanno risoluzioni o frame rate differenti: 1\% a 1280x720, 0.5\% a 1920x1440, 1\% a 30 fps, 1\% a 48 fps e 0.2\% a 90 fps.
 
 In media, le registrazioni hanno una durata di 1.7 ore, con un massimo di 4.6 ore per soggetto.
 
@@ -49,7 +49,7 @@ I sostantivi presenti nelle narrazioni sono stati usati come riferimento per ann
 \end{figure}
 
 \subsection*{AMB}
-Partendo da queste annotazioni, è stato possibile creare la ground truth per il benchmark \emph{Active Memories Benchmark} (AMB). L'AMB è un benchmark di tipo \emph{visual-only QA}, perciò uno dei principali problemi da affrontare è la selezione di una rappresentazione visiva degli oggetti per costruire le \emph{visual query} (VQ). Per gestire l'occlusione tipica dei video egocentrici, causata dalle mani del soggetto o da altri oggetti, per ogni oggetto sono stati selezionati fino a tre \emph{image patch} differenti, sufficientemente distanti temporalmente (almeno 0.5s tra una patch e l'altra) per mostrare pose differenti. Inoltre, sono state scelte patch con minima sovrapposizione spaziale con i bounding box di altri oggetti o mani attivi nello stesso frame.
+Partendo da queste annotazioni, è stato possibile creare la ground truth per \emph{Active Memories Benchmark} (AMB). Essendo l'AMB un benchmark di tipo \emph{visual-only QA}, uno dei principali problemi da affrontare è la selezione di una rappresentazione visiva degli oggetti per costruire le \emph{visual query} (VQ). Per gestire l'occlusione tipica dei video egocentrici, causata dalle mani del soggetto o da altri oggetti, per ogni oggetto sono stati selezionati fino a tre \emph{image patch} differenti, sufficientemente distanti temporalmente (almeno 0.5s tra una patch e l'altra) per mostrare pose differenti. Inoltre, sono state scelte patch con minima sovrapposizione spaziale con i bounding box di altri oggetti o mani attivi nello stesso frame.
 
 Analogamente, per le location sono stati estratti i frame con minima sovrapposizione spaziale con gli oggetti attivi, in modo che la location fosse visibile senza la presenza di molti oggetti in movimento. Inoltre si è garantita una distanza minima temporale di 1s tra le immagini selezionate.  
 
@@ -63,13 +63,13 @@ Sono stati selezionati casualmente 100 video di EPIC-KITCHENS, dai quali sono st
 \end{figure}
 
 \begin{itemize}
-    \item \textbf{Q6}: le opzioni includono le location visitate immediatamente dopo che il soggetto ha interagito con un oggetto specifico;
     \item \textbf{Q3-Q4}: le opzioni possono includere oggetti utilizzati con la mano opposta;
     \item \textbf{Q2-Q3}: il tempo della query $t$ è fissato in modo tale che l'oggetto [VQ] non sia ancora stato utilizzato, richiedendo prima di individuare l'interazione con [VQ] e successivamente quelle precedenti o successive.
+    \item \textbf{Q6}: le opzioni includono le location visitate immediatamente dopo che il soggetto ha interagito con un oggetto specifico;
 \end{itemize}
 
 \section{ENIGMA-51}
-ENIGMA-51 è un dataset egocentrico acquisito in uno scenario industriale, in cui 19 soggetti hanno seguito istruzioni per completare operazioni di riparazione di schede elettroniche utilizzando strumenti industriali (ad esempio cacciaviti elettrici) ed apparecchiature di laboratorio (ad esempio oscilloscopi).  
+ENIGMA-51 è un dataset egocentrico acquisito in uno scenario industriale, in cui 19 soggetti hanno seguito istruzioni per completare operazioni di riparazione di schede elettroniche utilizzando strumenti industriali (ex: \textbf{cacciaviti elettrici}) e apparecchiature di laboratorio (ex: \textbf{oscilloscopi}).  
 
 \begin{figure}[ht]
     \centering
@@ -105,7 +105,7 @@ Nel complesso, sono state annotate \textbf{14.036 interazioni}.
     \caption{Esempi di azioni annotate in ENIGMA-51}
 \end{figure}
 
-Sono state definite 25 classi di oggetti, comprendenti sia oggetti fissi (ad esempio un pannello elettrico) sia strumenti mobili (come un cacciavite).  
+Sono state definite 25 classi di oggetti, comprendenti sia oggetti fissi (ex: \textbf{pannello elettrico}) sia strumenti mobili (ex: \textbf{pinze}).  
 Ogni oggetto è rappresentato attraverso una tupla che descrive la classe, le coordinate del rettangolo di delimitazione (\emph{bounding box}) e lo stato, che specifica se l'oggetto è attivo o passivo nell'interazione.  
 Complessivamente, sono stati annotati \textbf{275.135 oggetti}.  
 
@@ -158,7 +158,7 @@ Per confermare queste osservazioni in maniera più quantitativa, è stata calcol
     \label{fig:amb_heatmap}
 \end{figure}
 
-Si conferma infatti che le interazioni più frequenti sono quelle con all'interno le schede elettroniche. queste interagiscono più di frequente con "screwdriver" "oscilloscope" "power supply" (lascia in eng e metti traduzione in ita tra parentesi).
+Si conferma infatti che le interazioni più frequenti sono quelle con all'interno le schede elettroniche. Queste interagiscono più di frequente con "screwdriver" "oscilloscope" "power supply" (lascia in eng e metti traduzione in ita tra parentesi).
 
 \begin{figure}[ht]
     \centering
