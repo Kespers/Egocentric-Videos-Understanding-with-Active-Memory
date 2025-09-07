@@ -74,7 +74,7 @@ ENIGMA-51 è un dataset egocentrico acquisito in uno scenario industriale, in cu
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.8\linewidth]{Images/enigma_ex.png}
-    \caption{Frame presenti nel dataset ENIGMA-51}
+    \caption{ENIGMA-51 dataset}
 \end{figure}
 
 \subsection*{Collezione dei dati}
@@ -102,7 +102,7 @@ Nel complesso, sono state annotate \textbf{14.036 interazioni}.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1\linewidth]{Images/enigma_verbs.png}
-    \caption{Esempi di azioni annotate in ENIGMA-51}
+    \caption{Annotazioni verbi in ENIGMA-51}
 \end{figure}
 
 Sono state definite 25 classi di oggetti, comprendenti sia oggetti fissi (ex: \textbf{pannello elettrico}) sia strumenti mobili (ex: \textbf{pinze}).  
@@ -143,13 +143,14 @@ Nella figura \autoref{fig:enigma_chord} si evidenziano le associazioni tra le ca
         \caption{Power Supply Cables (c)}
         \label{fig:power_supply}
     \end{subfigure}
-    \caption{Chord diagrams che dimostrazione l'associazione tra categorie di oggetti nelle domande e la risposta corretta. Ogni subfigure corrisponde a un diverso tipo di procedura.}
+    \caption{Chord diagrams che mostrano l'associazione tra categorie VQ e la risposta corretta}
     \label{fig:enigma_chord}
 \end{figure}
 
 Si notano a primo impatto gli elementi centrali del dataset. In particolare, le schede elettroniche ad alta e bassa tensione risultano essere le più frequenti e vengono comunemente utilizzate insieme a:
 \emph{cacciavite}, \emph{sonda dell'oscilloscopio} e \emph{cavi di alimentazione}.
-Per confermare queste osservazioni in maniera più quantitativa, è stata calcolata anche la matrice di correlazione tra le categorie (\autoref{fig:amb_corrmatrix}).
+Per confermare queste osservazioni in maniera più quantitativa, è stata calcolata anche la matrice di correlazione tra le categorie (Fig.~\ref{fig:amb_heatmap}).
+Si conferma infatti che le interazioni più frequenti sono quelle con all'interno le schede elettroniche. Queste interagiscono più di frequente con \texttt{screwdriver}, \texttt{oscilloscope}, \texttt{power supply}. Questa caratteristica può essere notata anche nella Fig.~\ref{fig:amb_hist}.
 
 \begin{figure}[ht]
     \centering
@@ -158,11 +159,10 @@ Per confermare queste osservazioni in maniera più quantitativa, è stata calcol
     \label{fig:amb_heatmap}
 \end{figure}
 
-Si conferma infatti che le interazioni più frequenti sono quelle con all'interno le schede elettroniche. Queste interagiscono più di frequente con "screwdriver" "oscilloscope" "power supply" (lascia in eng e metti traduzione in ita tra parentesi).
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1\linewidth]{Images/enigma_hist.png}
     \caption{Istogramma delle occorrenze delle categorie degli oggetti nel benchmark AMB per ENIGMA-51.}
-    \label{fig:amb_corrmatrix}
+    \label{fig:amb_hist}
 \end{figure}

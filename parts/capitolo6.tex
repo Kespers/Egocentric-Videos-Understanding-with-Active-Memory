@@ -1,4 +1,5 @@
 \chapter{Risultati}
+\label{chapter:Risultati}
 In questo capitolo vengono presentati i risultati ottenuti. Si inizia con una panoramica dei risultati riportati nel lavoro originale, al fine di avere un riferimento di partenza, per poi illustrare i risultati sperimentali ottenuti sul nuovo dataset.
 \section{EPIC-KITCHENS}
 In principio AMEGO è stato valutato sul dataset EPIC-KITCHENS, confrontando le prestazioni con diverse baseline comunemente adottate nel task di video-QA:
@@ -63,7 +64,7 @@ Nella tabella ~\ref{table:acc_videos} viene riportata l'accuracy raggruppata per
 
 \begin{table}[ht]
     \centering
-    \caption{Accuracy (\%) sul test-set di enigma. Migliori valori in grassetto.}
+    \caption{Accuracy media (\%) sul test-set di enigma. Migliori valori in grassetto.}
     {\footnotesize
     \begin{tabular}{|c|c|c|} 
     \hline
@@ -94,75 +95,11 @@ Nella tabella ~\ref{table:acc_videos} viene riportata l'accuracy raggruppata per
 \end{table}
 
 Si osservano risultati non sempre soddisfacenti: in alcuni video l'accuracy scende al di sotto della soglia casuale (20\%), 
-mentre in altri supera sensibilmente le prestazioni riportate su EPIC-KITCHENS. 
+mentre in altri supera sensibilmente le prestazioni originali. 
 Analizzando le percentuali per ogni domanda si evidenzia che \textbf{203} query hanno totalizzato accuracy nulla. 
 Per approfondire la natura dei risultati, si analizza la query \texttt{Q5\_000089}, scelta come caso esemplificativo per evidenziare la criticità principale riscontrata.
-In questo caso la \emph{Visual Query (VQ)} è: \textbf{\texttt{low\_voltage\_board}}
 
-Le cinque risposte candidate associate sono:  
-
-\begin{center}
-\begin{tabular}{|c|}
-\hline
-\texttt{high\_voltage\_board} \\
-\texttt{oscilloscope\_probe\_tip} \\
-\texttt{electric\_screwdriver\_battery} \\
-\texttt{screwdriver} \\
-\texttt{power\_supply\_cables} \\
-\hline
-\end{tabular}
-\end{center}
-
-Nel benchmark, la risposta marcata come corretta è: \textbf{\texttt{screwdriver}}
-
-\begin{figure}[ht]
-    \centering
-    \setlength{\tabcolsep}{4pt}
-    \begin{tabular}{ccc}
-        \includegraphics[width=0.31\linewidth]{Images/zeroaccvq1.jpg} &
-        \includegraphics[width=0.31\linewidth]{Images/zeroaccvq2.jpg} &
-        \includegraphics[width=0.31\linewidth]{Images/zeroaccvq3.jpg} \\
-        (1) & (2) & (3)
-    \end{tabular}
-    \caption{VQ per la query \texttt{Q5\_000089}: tre versioni (1–3) dell'oggetto di query \texttt{low\_voltage\_board}.}
-    \label{fig:vq_zero_acc}
-\end{figure}
-
-\begin{table}[ht]
-    \centering
-    \caption{\raggedright Risposte per la query \texttt{Q5\_000089}: per ogni classe sono mostrate tre versioni. Ordine delle righe: 
-    (1) \texttt{high\_voltage\_board}, 
-    (2) \texttt{oscilloscope\_probe\_tip}, 
-    (3) \texttt{electric\_screwdriver\_battery},
-    \textbf{(4) \texttt{screwdriver} [CORRETTA]}, 
-    (5) \texttt{power\_supply\_cables}}
-    \label{fig:answers_zero_acc}
-    
-    \renewcommand{\arraystretch}{1.15}  % altezza riga
-    \setlength{\tabcolsep}{3pt}          % spazio tra colonne
-
-    \newcommand{\ansimg}[1]{\includegraphics[width=0.25\linewidth,height=2.5cm,keepaspectratio]{#1}}
-
-    \resizebox{\textwidth}{!}{%
-    \begin{tabular}{|>{\centering\arraybackslash}m{1.5cm}|c|c|c|}
-        \hline
-        \textbf{Indice} & \textbf{Versione 1} & \textbf{Versione 2} & \textbf{Versione 3} \\
-        \hline
-        1 & \ansimg{Images/zero_acc_ans1-1.jpg} & \ansimg{Images/zero_acc_ans1-2.jpg} & \ansimg{Images/zero_acc_ans1-3.jpg} \\
-        \hline
-        2 & \ansimg{Images/zero_acc_ans2-1.jpg} & \ansimg{Images/zero_acc_ans2-2.jpg} & \ansimg{Images/zero_acc_ans2-3.jpg} \\
-        \hline
-        3 & \ansimg{Images/zero_acc_ans3-1.jpg} & \ansimg{Images/zero_acc_ans3-2.jpg} & \ansimg{Images/zero_acc_ans3-3.jpg} \\
-        \hline
-        \textbf{4} & \ansimg{Images/zero_acc_ans4-1.jpg} & \ansimg{Images/zero_acc_ans4-2.jpg} & \ansimg{Images/zero_acc_ans4-3.jpg} \\
-        \hline
-        5 & \ansimg{Images/zero_acc_ans5-1.jpg} & \ansimg{Images/zero_acc_ans5-2.jpg} & \ansimg{Images/zero_acc_ans5-3.jpg} \\
-        \hline
-    \end{tabular}%
-    }
-\end{table}
-
-Nonostante gli oggetti appaiono ben distinti (Fig.~\ref{fig:vq_zero_acc} e Tab.~\ref{fig:answers_zero_acc}), in questo caso il modello non seleziona mai la risposta corretta. Per comprendere tale comportamento è utile osservare la struttura della memoria di AMEGO, fornita come file JSON. Di particolare importanza sono i seguenti campi:
+Come si nota nella Fig.~\ref{fig:answers_zero_acc}, nonostante le patch della VQ e delle varie risposte appaiono ben distinte, il modello non seleziona mai la risposta corretta. Per comprendere tale comportamento è utile osservare la struttura della memoria di AMEGO, fornita come file JSON. Di particolare importanza sono i seguenti campi:
 \begin{itemize}
     \item \texttt{track\_id}: identificativo univoco del tracklet.
     \item \texttt{obj\_bbox}: bounding box dell'oggetto
@@ -172,16 +109,26 @@ Nonostante gli oggetti appaiono ben distinti (Fig.~\ref{fig:vq_zero_acc} e Tab.~
 
 Come discusso nei capitoli precedenti, AMEGO risponde alle query valutando la presenza di \emph{overlap} temporali tra oggetti che il modello considera appartenenti allo stesso identificativo (\texttt{cluster}). Il problema può quindi risiedere nell'assegnazione delle istanze ai cluster.  
 
-Per indagare più a fondo, sono stati raggruppati i vari \emph{tracklet} per cluster, visualizzando nelle immagini i relativi \emph{bounding box}. Dall'analisi emerge che il modello di hand-object detection riesce a individuare correttamente gli oggetti a livello generale, e il \emph{tracker} mantiene buone coerenze spaziali. Tuttavia, sorge un limite significativo legato al livello di dettaglio richiesto: nelle annotazioni di ENIGMA vengono specificati particolari molto piccoli come connettori e componenti minuti. Come mostrato in Fig.~\ref{fig:cluster2-10}, il modello, non essendo stato addestrato su dataset industriali, tende a raggruppare in modo grossolano elementi complessi, arrivando a considerare l'intero quadro elettrico come un'unica istanza.
+Per approfondire l'analisi, è stato utilizzato lo script di visualizzazione dei cluster discusso nel Capitolo~\ref{cap:Esperimenti}. Dall'analisi emerge che il modello di hand-object detection riesce a individuare correttamente gli oggetti a livello generale, e il \emph{tracker} mantiene buone coerenze spaziali. Tuttavia, sorge un limite significativo legato al livello di dettaglio richiesto: nelle annotazioni di ENIGMA vengono specificati particolari molto piccoli come connettori o il tipo di scheda. Come mostrato in Fig.~\ref{fig:cluster2-10}, il modello, non essendo stato addestrato su dataset industriali, tende a raggruppare in modo grossolano elementi complessi, arrivando a considerare l'intero quadro elettrico come un'unica istanza.
+
+Un ulteriore limite emerge quando oggetti visivamente simili vengono confusi tra loro. Come mostrato in Fig.~\ref{fig:cluster24}, bastano piccole somiglianze, anche solo nel colore o nella forma, affinché il modello li raggruppi nello stesso cluster. Questo porta a difficoltà nel distinguere strumenti affini, come diversi tipi di cacciaviti, pinze o saldatori, oppure componenti che ricordano visivamente un cavo.
+
+Questo comportamento ricorre con una certa frequenza nei cluster. Per valutare se tale fenomeno potesse effettivamente influenzare i risultati, è stata adottata una strategia di “rilassamento” delle regole di valutazione dell'accuracy, considerando come corrette anche risposte associate a oggetti visivamente molto simili. In particolare, sono state applicate le seguenti indicazioni:
+\begin{itemize}
+    \item \textbf{Socket}: nelle annotazioni sono presenti quattro tipologie distinte, qui considerate come un'unica categoria.
+    \item \textbf{Bottoni}: unificazione di tutte le varianti.
+    \item \textbf{Board}: accorpamento delle diverse tipologie di schede.
+    \item \textbf{Cavi}: unificazione tra power supply, probe tips e clips.
+\end{itemize}
+
+Applicando questo rilassamento, l'accuracy raggiunge il valore di \textbf{28.86\%}, molto vicino a quello riportato nel paper originale.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.6\linewidth]{Images/cluster2-10.jpg}
+    \includegraphics[width=0.5\linewidth]{Images/cluster2-10.jpg}
     \caption{HOI relativo al \texttt{cluster=2} con \texttt{track\_id = 10}.}
     \label{fig:cluster2-10}
 \end{figure}
-
-Un ulteriore limite emerge quando oggetti visivamente simili vengono confusi tra loro. Come mostrato in Fig.~\ref{fig:cluster24}, bastano piccole somiglianze, anche solo nel colore o nella forma, perché il modello li raggruppi nello stesso cluster. Questo porta a difficoltà nel distinguere strumenti affini, come diversi tipi di cacciaviti, pinze o saldatori, oppure componenti che ricordano visivamente un cavo.
 
 \begin{figure}[ht]
     \centering
@@ -198,12 +145,35 @@ Un ulteriore limite emerge quando oggetti visivamente simili vengono confusi tra
     \label{fig:cluster24}
 \end{figure}
 
-Questo comportamento ricorre con una certa frequenza nei cluster. Per valutare se tale fenomeno potesse effettivamente influenzare i risultati, è stata adottata una strategia di “rilassamento” delle regole di valutazione dell'accuracy, considerando come corrette anche risposte associate a oggetti visivamente molto simili. In particolare, sono state applicate le seguenti indicazioni:
-\begin{itemize}
-    \item \textbf{Socket}: nelle annotazioni sono presenti quattro tipologie distinte, qui considerate come un'unica categoria.
-    \item \textbf{Bottoni}: unificazione di tutte le varianti.
-    \item \textbf{Board}: accorpamento delle diverse tipologie di schede.
-    \item \textbf{Cavi}: unificazione tra power supply, probe tips e clips.
-\end{itemize}
+\begin{table}[H]
+    \centering
+    \caption{\raggedright VQ e risposte per la query \texttt{Q5\_000089}: per ogni classe sono mostrate tre versioni.}
+    \label{fig:answers_zero_acc}
+    
+    \renewcommand{\arraystretch}{1.0}  % altezza riga normale
+    \setlength{\tabcolsep}{3pt}        % spazio colonne
 
-Applicando questo rilassamento, l'accuracy raggiunge il valore di \textbf{28.86\%}, molto vicino a quello riportato nel paper originale.
+    % macro con larghezza adattata
+    \newcommand{\ansimg}[1]{\includegraphics[width=0.28\linewidth,height=2.6cm,keepaspectratio]{#1}}
+
+    % ridimensioniamo l'intera tabella per occupare la pagina
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{|>{\centering\arraybackslash}m{2.0cm}|c|c|c|}
+        \hline
+        \textbf{Tipo} & \textbf{Versione 1} & \textbf{Versione 2} & \textbf{Versione 3} \\
+        \hline
+        VQ & \ansimg{Images/zeroaccvq1.jpg} & \ansimg{Images/zeroaccvq2.jpg} & \ansimg{Images/zeroaccvq3.jpg} \\
+        \hline\hline
+        ANS\_1 & \ansimg{Images/zero_acc_ans1-1.jpg} & \ansimg{Images/zero_acc_ans1-2.jpg} & \ansimg{Images/zero_acc_ans1-3.jpg} \\
+        \hline
+        ANS\_2 & \ansimg{Images/zero_acc_ans2-1.jpg} & \ansimg{Images/zero_acc_ans2-2.jpg} & \ansimg{Images/zero_acc_ans2-3.jpg} \\
+        \hline
+        ANS\_3 & \ansimg{Images/zero_acc_ans3-1.jpg} & \ansimg{Images/zero_acc_ans3-2.jpg} & \ansimg{Images/zero_acc_ans3-3.jpg} \\
+        \hline
+        ANS\_4 & \ansimg{Images/zero_acc_ans4-1.jpg} & \ansimg{Images/zero_acc_ans4-2.jpg} & \ansimg{Images/zero_acc_ans4-3.jpg} \\
+        \hline
+        ANS\_5 & \ansimg{Images/zero_acc_ans5-1.jpg} & \ansimg{Images/zero_acc_ans5-2.jpg} & \ansimg{Images/zero_acc_ans5-3.jpg} \\
+        \hline
+    \end{tabular}%
+    }
+\end{table}

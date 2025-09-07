@@ -1,7 +1,6 @@
 \chapter{Esperimenti}
 \label{cap:Esperimenti}
-Gli esperimenti sono stati condotti seguendo i settaggi originali di AMEGO \cite{goletto2024amego}.  
-Di seguito vengono riportate le principali impostazioni utilizzate.
+Gli esperimenti sono stati condotti seguendo i settaggi originali di AMEGO. Di seguito vengono riportate le principali impostazioni utilizzate.
 
 Per l'identificazione delle interazioni mano-oggetto a livello di frame è stato utilizzato l'\emph{Hand-Object Interaction detector} \cite{shan2020understandinghumanhandscontact}.  
 Le feature visive degli oggetti sono state estratte tramite il modello pre-addestrato \emph{DINO-v2} \cite{oquab2024dinov2learningrobustvisual}, con ridimensionamento in fase di valutazione sulla versione \emph{ViT-L}.  
@@ -38,7 +37,7 @@ Il notebook e altre risorse che forniscono ulteriori dettagli sui lavori svolti 
 
 \section{Setup ambiente}
 
-Per poter eseguire il progetto AMEGO in tutte le sue componenti, gli autori fornivano due ambienti \texttt{conda} separati, ciascuno con versioni di \texttt{python} e dipendenze differenti. In particolare:
+Per poter eseguire il progetto AMEGO in tutte le sue componenti, gli autori consigliano due ambienti \texttt{conda} separati, ciascuno con versioni di \texttt{python} e dipendenze differenti. In particolare:
 \begin{itemize}
     \item l'ambiente \texttt{amego}, basato su \texttt{python 3.9}, necessario per lanciare gli script nativi del framework;
     \item l'ambiente \texttt{handobj}, basato su \texttt{python 3.8}, per eseguire lo script di \emph{hand-object detection};
@@ -88,7 +87,7 @@ Dopo aver verificato il corretto funzionamento dell'intera pipeline, è stato qu
 Analogamente a quanto fatto per EPIC-KITCHENS, sono stati eseguiti gli script di AMEGO per estrarre le componenti indispensabili al funzionamento del metodo. La differenza è l'uso della partizione montata che ha agevolato la parte di estrazione frame in quanto erano già forniti.
 
 \subsection*{Elaborazione files}
-Un primo lavoro ha riguardato la strutturazione delle cartelle. Data la struttura loader usati da AMEGO, è suggerita la seguente organizzazione:
+Un primo lavoro ha riguardato la strutturazione delle cartelle. Data la struttura dei loader usati da AMEGO, è suggerita la seguente organizzazione:
 \begin{center}
     \begin{verbatim}
         <video_id>/
@@ -109,27 +108,17 @@ In ENIGMA i frame dei video sono forniti in un'unica cartella con il formato:
 \begin{center}
 \texttt{\textbf{<VIDEO-ID>}\_\textbf{<FRAME-ID>}.png}    
 \end{center}
-Inoltre la risoluzione fornita è \texttt{2272 x 1278}, mentre AMEGO si aspetta \texttt{456 x 256}. A tal proposito è stato sviluppato uno script Python che ristruttura e ridimensiona correttamente tutti i file.
+Inoltre la risoluzione fornita è (\texttt{2272 $\times$ 1278}), mentre AMEGO si aspetta (\texttt{456 $\times$ 256}). A tal proposito è stato sviluppato uno script Python che ristruttura e ridimensiona correttamente tutti i file.
 
-A partire da questa riorganizzazione, è stato possibile eseguire in sequenza i vari script.
-
-Con queste basi è stato possibile creare i benchmark su cui testare la memoria. Come anticipato in precedenza, l'attenzione è stata posta sulle query di tipo \textbf{concurrency}, in particolare sulla query Q5: ``What did I use with [VQ]?''. Inizialmente si era considerata anche la Q6, ma per motivi che saranno approfonditi in seguito, non è stato possibile includerla negli esperimenti.
+Con queste basi è stato possibile creare i benchmark su cui testare la memoria. Come anticipato in precedenza, l'attenzione è stata posta sulle query di tipo \textbf{concurrency}, in particolare sulla query Q5. Inizialmente si era considerata anche la Q6, ma per motivi che saranno approfonditi in seguito, non è stato possibile includerla negli esperimenti.
 
 Per la costruzione del benchmark su ENIGMA-51, le annotazioni disponibili sono state rielaborate al fine di generare i file JSON richiesti da \emph{AMEGO} per l'esecuzione delle query.
 
-\subsection*{Q5}
+\subsection*{Q5: What did I use with [VQ]?}
 
-La query Q5 valuta la capacità del modello di riconoscere oggetti utilizzati simultaneamente con un altro oggetto. In particolare, la domanda è:
+La query Q5 valuta la capacità del modello di riconoscere oggetti utilizzati simultaneamente con un altro oggetto.
 
-\begin{quote}
-\textit{What did I use with [VQ]?}
-\end{quote}
-
-dove \texttt{[VQ]} indica un oggetto utilizzato contemporaneamente a un altro durante un'interazione.
-
-Ogni query è strutturata come segue:
-
-\subsubsection*{Creazione struttura di base}
+Il set di domande è strutturato come segue:
 \begin{itemize}
     \item \textbf{id:} Identificativo univoco della domanda
     \item \textbf{video\_id:} Identificativo del video di riferimento
@@ -177,7 +166,7 @@ Per ogni classe sono state selezionate tre patch differenti, temporalmente disti
 Infine, è stata effettuata una conversione del formato dei bounding box: le annotazioni originali fornivano i box come 
 \begin{center}
 \([x_\text{min}, y_\text{min}, \text{width}, \text{height}]\)
-\end{center},
+\end{center}
 
 mentre AMEGO richiede:
 \begin{center}
@@ -186,20 +175,46 @@ mentre AMEGO richiede:
 
 Dopo questa operazione è stato quindi generato il file json per fare partire la query.
 
-\subsection*{Q6}
-La query Q6 avrebbe testato la capacità del modello di identificare le location in cui è stato utilizzato un oggetto, tramite la domanda:
+\subsection*{Q6: Where did I use [VQ]?}
+La query Q6 avrebbe testato la capacità del modello di identificare le location in cui è stato utilizzato un oggetto.
 
-\begin{quote}
-\textit{Where did I use [VQ]?}
-\end{quote}
+Tuttavia, le annotazioni di ENIGMA non fornivano informazioni sufficienti sulla posizione dei soggetti nei frame. In un primo momento si era ipotizzato di estrarre parole chiave dai file testuali delle procedure per inferire possibili location; tuttavia, il numero limitato di ambienti estraibili e la mancanza di corrispondenza con i frame annotati hanno reso questa sperimentazione poco praticabile.  
 
-Tuttavia, le annotazioni di ENIGMA non fornivano informazioni sufficienti sulla posizione dei soggetti nei frame. Inizialmente si era pensato di estrarre parole chiave dai file testuali delle procedure per inferire possibili location, ma il numero limitato di location disponibili e l'assenza di corrispondenza con i frame annotati hanno reso la sperimentazione non praticabile. Di conseguenza, il lavoro si è concentrato esclusivamente sulla query Q5.
+In alternativa, sfruttando le location estratte da \emph{AMEGO}, sono stati individuati \textbf{10} cluster.
+
+\begin{figure}[ht]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Images/amego_loc0.jpg}
+        \caption*{\texttt{cluster=0}}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Images/amego_loc1.jpg}
+        \caption*{\texttt{cluster=5}}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Images/amego_loc2.jpg}
+        \caption*{\texttt{cluster=3}}
+    \end{minipage}
+    \caption{Esempi di location individuate da \emph{AMEGO} con i relativi cluster assegnati.}
+    \label{fig:amego_locations}
+\end{figure}
+
+Un'analisi manuale dei cluster ha mostrato che le possibili location corrispondono a: scrivania, area strumenti da tavolo, zona riparazione, consultazione, zona quaderno e quadro elettrico.  
+
+Sono però emerse alcune criticità: le location risultano spesso mescolate, con cluster che vengono considerati unici ma che in realtà dovrebbero essere suddivisi; inoltre, le riprese sono molto statiche e, per questa ragione, anche con annotazioni più accurate non si otterrebbero location realmente significative.  
+
+Alla luce di queste considerazioni, per questo tipo di query sarebbe più opportuno utilizzare un dataset industriale differente, caratterizzato da una maggiore varietà di postazioni, da cui costruire un benchmark più affidabile. Per tali motivi, il lavoro si è concentrato esclusivamente sulla query Q5.
 
 \section{Analisi}
+
 \subsection*{Tempi di esecuzione}
 
 Di seguito sono riportati i tempi approssimativi di esecuzione dei vari script, eseguiti in sequenza sul test-set ENIGMA-51.
-Si nota come la fase più dispendiosa sia l'estrazione delle hand-object detections e dell'optical flow, che richiedono circa 30 ore di calcolo (Tabella~\ref{tab:tempi}).
+Si nota come la fase più dispendiosa sia l'estrazione delle hand-object detections e dell'optical flow, che richiedono circa 30 ore di calcolo.
 
 \begin{table}[ht]
     \centering
@@ -218,20 +233,39 @@ Si nota come la fase più dispendiosa sia l'estrazione delle hand-object detecti
     \label{tab:tempi}
 \end{table}
 
-\subsection*{Creazione video}
+\subsection*{Visualizzazione cluster}
+Come anticipato nella discussione relativa alla query Q6, è stato sviluppato uno script che consente di visualizzare in modo approfondito la memoria generata. Lo script crea due cartelle principali: \textbf{HOI\_FRAME} e \textbf{LS\_FRAME}.  
+
+All'interno di ciascuna cartella vengono generate sottocartelle corrispondenti ai cluster individuati, contenenti i relativi frame.\\
+Nel caso di \texttt{HOI\_FRAME}, per ogni immagine viene inoltre disegnato il bounding box corrispondente.
+
+\subsection*{Visualizzazione video}
 
 Per avere una visione d'insieme della memoria creata da AMEGO, è stato realizzato uno script che, dato un video, raggruppa i vari HOI tracklets trovati e li sovrappone con i rispettivi bounding.
 Come mostrato in Fig.~\ref{fig:amego_video}, nella parte superiore del video sono visualizzate informazioni generali sul tipo di video e sul frame corrente. Al centro scorrono i frame con disegnati i bounding box dei vari HOI, ciascuno caratterizzato da un colore assegnato univocamente a ogni cluster.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\linewidth]{Images/amego_video.jpg}
+    \includegraphics[width=0.7\linewidth]{Images/amego_video.jpg}
     \caption{visualizzazione degli HOI tracklet del video 66 }
     \label{fig:amego_video}
 \end{figure}
 
 Al di sotto del video, una tabella mostra alcune informazioni chiave sugli HOI tracklets visualizzati. In particolare, si riporta il \textbf{Track ID}, il \textbf{Cluster} associato con indicazione dell'ID e del colore univoco, il numero di frame rimanenti in cui il tracklet è ancora attivo (\textit{Time Left Active}) e il numero di frame prima che il tracklet diventi attivo (\textit{Time to be Active}).
 
-Osservando Fig.~\ref{fig:amego_video}, si nota un overlap tra le istanze \texttt{8} e \texttt{9}, presumibilmente corrispondenti rispettivamente a board e cacciaviti. In query che coinvolgono questi oggetti, i relativi tracklet verranno quindi considerati dal modello.
+\subsection*{Visualizzazione benchmark}
+Per avere sempre a disposizione le diverse query, è stato sviluppato uno script che organizza le domande nella seguente struttura:
 
-Lo script utilizzato per generare il video è disponibile nella repository GitHub del progetto.
+\begin{verbatim}
+<video_id>/
+    Q5_00000x/
+        VQ/
+            <image_patch_1>.jpg
+            <image_patch_2>.jpg
+            <image_patch_3>.jpg
+        Answers/
+            <answer_ID>_<class_name>/
+                <image_patch_1>.jpg
+                <image_patch_2>.jpg
+                <image_patch_3>.jpg
+\end{verbatim}
