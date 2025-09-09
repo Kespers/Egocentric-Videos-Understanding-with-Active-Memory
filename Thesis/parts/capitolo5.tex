@@ -129,7 +129,7 @@ Il set di domande è strutturato come segue:
 \end{itemize}
 
 \subsubsection*{Creazione risposte}
-Per generare le query, si è proceduto selezionando le annotazioni in cui erano presenti almeno due interazioni \emph{hand-object} simultanee con oggetti diversi. Il primo oggetto dell'interazione è stato utilizzato come \texttt{question\_image}, mentre le risposte sono state composte includendo:
+Per generare le query, si è proceduto selezionando le annotazioni in cui erano presenti almeno due interazioni \emph{hand-object} simultanee tra oggetti di diversa categoria. Il primo oggetto dell'interazione è stato utilizzato come \texttt{question\_image}, mentre le risposte sono state composte includendo:
 
 \begin{itemize}
     \item \textbf{RISPOSTA CORRETTA}: secondo oggetto dell'interazione;
@@ -174,6 +174,59 @@ mentre AMEGO richiede:
 \end{center}
 
 Dopo questa operazione è stato quindi generato il file json per fare partire la query.
+
+
+\subsubsection*{Esempio}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1\linewidth]{Images/q5_ex_annotations.png}
+    \caption{
+        Frame 46\_6043.jpg annotato con i seguenti oggetti e relativi indici/colori: 
+        0: power\_supply (grigio), 
+        4: oscilloscope\_ground\_clip (verde), 
+        12: pliers (magenta), 
+        14: low\_voltage\_board (verde scuro), 
+        3: oscilloscope\_probe\_tip (rosso), 
+        15: low\_voltage\_board\_screen (argento).
+    }
+    \label{fig:q5ex}
+
+\end{figure}
+
+Come si nota dalla Fig.~\ref{fig:q5ex}, l'interazione simultanea avviene tra \textbf{low voltage board} e \textbf{electric screwdriver}. Questi due elementi saranno quindi trattati rispettivamente come \textbf{VQ} e \textbf{CORRECT ANSWER}. In questo caso particolare, con gli altri oggetti presenti nella scena, riusciamo ad arrivare a 4 elementi.
+
+Quindi, la query avrà la seguente forma:
+
+\begin{verbatim}
+{
+ "id": "Q5_000000",
+ "video_id": "46",
+ "question": "What did I use with [VQ]?",
+ "question_image": {
+     "low_voltage_board": <INFO>
+ },
+ "answers": {
+     "1": {"oscilloscope_ground_clip": <INFO>},
+     "2": {"electric_screwdriver": <INFO>},
+     "3": {"oscilloscope_probe_tip": <INFO>},
+     "4": {"pliers": <INFO>},
+     "5": {"low_voltage_board_screen": <INFO>}
+ },
+ "correct": 2
+}
+\end{verbatim}
+
+All'interno di ogni oggetto (\texttt{<INFO>}) troviamo le informazioni riguardo le 3 patch visuali. In particolare:
+\begin{verbatim}
+{
+    "OBJECT": [
+        [<frame_1>,[x0, y0, x1, y1]]
+        [<frame_2>,[x0, y0, x1, y1]]
+        [<frame_3>,[x0, y0, x1, y1]]
+    ]
+}
+\end{verbatim}
+
 
 \subsection*{Q6: Where did I use [VQ]?}
 La query Q6 avrebbe testato la capacità del modello di identificare le location in cui è stato utilizzato un oggetto.
@@ -246,7 +299,7 @@ Come mostrato in Fig.~\ref{fig:amego_video}, nella parte superiore del video son
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.7\linewidth]{Images/amego_video.jpg}
+    \includegraphics[width=1\linewidth]{Images/amego_video.jpg}
     \caption{visualizzazione degli HOI tracklet del video 66 }
     \label{fig:amego_video}
 \end{figure}
