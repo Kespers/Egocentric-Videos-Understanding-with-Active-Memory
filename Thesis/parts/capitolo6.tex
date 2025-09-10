@@ -177,3 +177,53 @@ Applicando questo rilassamento, l'accuracy raggiunge il valore di \textbf{28.86\
     \end{tabular}%
     }
 \end{table}
+
+\subsection*{Esempi}
+\subsubsection*{Query con risposta corretta: Q5\_000388}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Images/amego_correct_res-ANS.png}
+    \caption{
+        ENIGMA-51\_AMB: Q5\_000388. In verde la risposta corretta
+    }
+    \label{fig:amego_correct_ans}
+\end{figure}
+
+Analizzando il filmato prodotto con lo script discusso nel Cap.~\ref{cap:Esperimenti}, notiamo come AMEGO abbia riconosciuto correttamente l'overlap dei due oggetti ed abbia probabilmente usato questa informazione per rispondere a questa query.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Images/amego_correct_res-VIDEO.png}
+    \caption{
+        ENIGMA-51: Video 89 con annotazioni prodotte dalla memoria AMEGO
+    }
+    \label{fig:amego_correct_video}
+\end{figure}
+
+
+\subsubsection*{Query con risposta errata: Q5\_000104}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\linewidth]{Images/amego_error_res-ANS.png}
+    \caption{
+        ENIGMA-51\_AMB: Q5\_000104. In verde la risposta corretta, in rosso quelle selezionate erroneamente dal modello.
+    }
+    \label{fig:amego_error_ans}
+\end{figure}
+
+Si può notare innanzitutto la difficoltà nell'individuare la risposta corretta: la \emph{board} viene percepita come un unico oggetto, mentre in questo caso si distingue tra l'interazione con lo schermo della board e quella con la board stessa.
+
+In particolare, durante l'inferenza ha considerato equivalenti le risposte \textbf{A} ed \textbf{E}, distribuendo le predizioni in maniera quasi equa tra le due. Questo comportamento è probabilmente dovuto alla forte somiglianza visiva tra i dettagli delle due opzioni.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.6\linewidth]{Images/amego_error_res-VIDEO.png}
+    \caption{
+        ENIGMA-51: Video 53 con annotazioni prodotte dalla memoria AMEGO
+    }
+    \label{fig:amego_error_video}
+\end{figure}
+
+Come previsto, analizzando il video estratto dalla memoria (Fig.~\ref{fig:amego_error_video}), si nota che il modello ha percepito la \emph{board} come un unico oggetto.

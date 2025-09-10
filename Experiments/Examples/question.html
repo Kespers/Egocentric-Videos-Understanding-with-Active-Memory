@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #ffffff;
+            padding: 40px 20px;
+            color: #1a1a1a;
+        }
+
+        .quiz-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 48px;
+            box-shadow: 
+                0 1px 3px rgba(0, 0, 0, 0.1),
+                0 1px 2px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e5e7eb;
+        }
+
+        .question-text {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 48px;
+            line-height: 1.5;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .main-image-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 48px;
+        }
+
+        .main-image {
+            max-width: 500px;
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .options-container {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .option {
+            flex: 0 0 180px;
+        }
+
+        .option {
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .option:hover {
+            border-color: #d1d5db;
+        }
+
+        .option-label {
+            background: #f9fafb;
+            color: #374151;
+            text-align: center;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .option.selected {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+
+        .option.selected .option-label {
+            background: #10b981;
+            color: #ffffff;
+            border-bottom-color: #10b981;
+        }
+
+        .option.deselected {
+            border-color: #ef4444;   /* rosso acceso (tailwind red-500) */
+            background: #fef2f2;     /* rosso chiarissimo (tailwind red-50) */
+        }
+
+        .option.deselected .option-label {
+            background: #ef4444;     /* rosso pieno */
+            color: #ffffff;          /* testo bianco */
+            border-bottom-color: #ef4444; /* bordo coerente */
+        }
+
+        .option-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+            
+            .quiz-container {
+                padding: 32px 24px;
+                border-radius: 8px;
+            }
+            
+            .question-text {
+                font-size: 18px;
+                margin-bottom: 32px;
+            }
+            
+            .main-image-container {
+                margin-bottom: 32px;
+            }
+            
+            .options-container {
+                justify-content: center;
+                gap: 12px;
+                overflow-x: auto;
+                padding: 0 10px;
+            }
+            
+            .option {
+                flex: 0 0 160px;
+            }
+            
+            .option-image {
+                height: 140px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quiz-container {
+                padding: 24px 16px;
+            }
+            
+            .question-text {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="question-text">
+            <span>
+                [53 / Q5_000104]
+            </span>
+            <span style="font-weight: normal;">
+                What did I use with [VQ]?
+            </span>
+        </div>
+        
+        <div class="main-image-container">
+            <img id="main-image" class="main-image" alt="Main quiz image">
+        </div>
+        
+        <div id="options-container" class="options-container">
+        </div>
+    </div>
+
+    <script>
+        // Array unico con tutti i link delle immagini
+        // const images = [
+        //     "correct/vq.jpg", // Main image
+        //     "correct/1.jpg", // Main image
+        //     "correct/2.jpg", // Main image
+        //     "correct/3.jpg", // Main image
+        //     "correct/4.jpg", // Main image
+        //     "correct/5.jpg", // Main image
+        // ];
+        const images = [
+            "error/vq.jpg", // Main image
+            "error/1.jpg", // Main image
+            "error/2.jpg", // Main image
+            "error/3.jpg", // Main image
+            "error/4.jpg", // Main image
+            "error/5.jpg", // Main image
+        ];
+
+        // Imposta l'immagine principale
+        document.getElementById('main-image').src = images[0];
+
+        // Crea le opzioni
+        const optionsContainer = document.getElementById('options-container');
+        const labels = ['A', 'B', 'C', 'D', 'E'];
+        const selectedOption = 2; // Option C (index 2)
+
+        for (let i = 0; i < 5; i++) {
+            const option = document.createElement('div');
+            option.className = `option ${i === selectedOption ? 'selected' : ''}`;
+            
+            const label = document.createElement('div');
+            label.className = 'option-label';
+            label.textContent = labels[i] + '.';
+            
+            const img = document.createElement('img');
+            img.className = 'option-image';
+            img.src = images[i + 1];
+            img.alt = `Option ${labels[i]}`;
+            
+            option.appendChild(label);
+            option.appendChild(img);
+            optionsContainer.appendChild(option);
+
+            // Add click interaction
+            option.addEventListener('click', () => {
+                // Remove selected class from all options
+                document.querySelectorAll('.option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                // Add selected class to clicked option
+                option.classList.add('selected');
+            });
+        }
+    </script>
+</body>
+</html>

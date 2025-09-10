@@ -287,24 +287,36 @@ Si nota come la fase più dispendiosa sia l'estrazione delle hand-object detecti
 \end{table}
 
 \subsection*{Visualizzazione cluster}
-Come anticipato nella discussione relativa alla query Q6, è stato sviluppato uno script che consente di visualizzare in modo approfondito la memoria generata. Lo script crea due cartelle principali: \textbf{HOI\_FRAME} e \textbf{LS\_FRAME}.  
-
-All'interno di ciascuna cartella vengono generate sottocartelle corrispondenti ai cluster individuati, contenenti i relativi frame.\\
+Come anticipato nella discussione relativa alla query Q6, è stato sviluppato uno script che consente di visualizzare in modo approfondito la memoria generata. Lo script crea due cartelle principali: \textbf{HOI FRAMES} e \textbf{LS FRAMES}.
+All'interno di ciascuna cartella vengono generate sottocartelle corrispondenti ai cluster individuati, contenenti i relativi frame.
 Nel caso di \texttt{HOI\_FRAME}, per ogni immagine viene inoltre disegnato il bounding box corrispondente.
 
-\subsection*{Visualizzazione video}
+\begin{figure}[h!]
+    \small
+    \begin{minipage}[t]{0.44\linewidth}
+        \begin{verbatim}
+    HOI_FRAMES/
+        <cluster_id>/
+            <track_id>
+                frame.jpg
+                frame.jpg
+                frame.jpg
+            <track_id>
+            <track_id>
+        \end{verbatim}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.44\linewidth}
+        \begin{verbatim}
+    LS_FRAMES/
+        <cluster_id>/
+            frame.jpg
+            frame.jpg
+            frame.jpg
+        \end{verbatim}
+    \end{minipage}
 
-Per avere una visione d'insieme della memoria creata da AMEGO, è stato realizzato uno script che, dato un video, raggruppa i vari HOI tracklets trovati e li sovrappone con i rispettivi bounding.
-Come mostrato in Fig.~\ref{fig:amego_video}, nella parte superiore del video sono visualizzate informazioni generali sul tipo di video e sul frame corrente. Al centro scorrono i frame con disegnati i bounding box dei vari HOI, ciascuno caratterizzato da un colore assegnato univocamente a ogni cluster.
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=1\linewidth]{Images/amego_video.jpg}
-    \caption{visualizzazione degli HOI tracklet del video 66 }
-    \label{fig:amego_video}
 \end{figure}
-
-Al di sotto del video, una tabella mostra alcune informazioni chiave sugli HOI tracklets visualizzati. In particolare, si riporta il \textbf{Track ID}, il \textbf{Cluster} associato con indicazione dell'ID e del colore univoco, il numero di frame rimanenti in cui il tracklet è ancora attivo (\textit{Time Left Active}) e il numero di frame prima che il tracklet diventi attivo (\textit{Time to be Active}).
 
 \subsection*{Visualizzazione benchmark}
 Per avere sempre a disposizione le diverse query, è stato sviluppato uno script che organizza le domande nella seguente struttura:
@@ -322,3 +334,17 @@ Per avere sempre a disposizione le diverse query, è stato sviluppato uno script
                 <image_patch_2>.jpg
                 <image_patch_3>.jpg
 \end{verbatim}
+
+\subsection*{Visualizzazione video}
+
+Per avere una visione d'insieme della memoria creata da AMEGO, è stato realizzato uno script che, dato un video, raggruppa i vari HOI tracklets trovati e li sovrappone con i rispettivi bounding.
+Come mostrato in Fig.~\ref{fig:amego_video}, nella parte superiore del video sono visualizzate informazioni generali sul tipo di video e sul frame corrente. Al centro scorrono i frame con disegnati i bounding box dei vari HOI, ciascuno caratterizzato da un colore assegnato univocamente a ogni cluster.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{Images/amego_video.jpg}
+    \caption{visualizzazione degli HOI tracklet del video 66 }
+    \label{fig:amego_video}
+\end{figure}
+
+Al di sotto del video, una tabella mostra alcune informazioni chiave sugli HOI tracklets visualizzati. In particolare, si riporta il \textbf{Track ID}, il \textbf{Cluster} associato con indicazione dell'ID e del colore univoco, il numero di frame rimanenti in cui il tracklet è ancora attivo (\textit{Time Left Active}) e il numero di frame prima che il tracklet diventi attivo (\textit{Time to be Active}).
