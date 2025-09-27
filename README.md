@@ -6,7 +6,7 @@
 
 This repository contains the code developed for my **Bachelor’s thesis** in Computer Science at the University of Catania. The work focuses on evaluating the performance of [AMEGO-Q5](https://gabrielegoletto.github.io/AMEGO/) query using the [ENIGMA-51](https://iplab.dmi.unict.it/ENIGMA-51/) dataset.
 
-For more details, check the [thesis document](https://github.com/Kespers/Egocentric-Videos-Understanding-with-Active-Memory/blob/23d241f0706d399b3ffdea3af07cd372ba3d74d8/Thesis/document.pdf), or take a look at the [short presentation](https://github.com/Kespers/Egocentric-Videos-Understanding-with-Active-Memory/blob/23d241f0706d399b3ffdea3af07cd372ba3d74d8/presentation/Kevin_Speranza_presentazione-L31.pdf) for a quick summary.
+For more details, check the [thesis document](https://github.com/Kespers/Egocentric-Videos-Understanding-with-Active-Memory/blob/23d241f0706d399b3ffdea3af07cd372ba3d74d8/Thesis/document.pdf) or take a look at the [short presentation](https://github.com/Kespers/Egocentric-Videos-Understanding-with-Active-Memory/blob/23d241f0706d399b3ffdea3af07cd372ba3d74d8/presentation/Kevin_Speranza_presentazione-L31.pdf) for a quick summary.
 
 ## Relevant Files
 
