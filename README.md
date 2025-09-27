@@ -1,6 +1,6 @@
 # Egocentric Video Understanding with Active Memory
 
-https://github.com/user-attachments/assets/4161de83-6d14-415d-b140-52e976f50b74
+![gud](https://github.com/user-attachments/assets/af6d8d35-321c-4464-9d7e-956bb3e2f4eb)
 
 This repository contains code used to evaluate the performance of [AMEGO](https://gabrielegoletto.github.io/AMEGO/)-Q5 queries on the [ENIGMA-51](https://iplab.dmi.unict.it/ENIGMA-51/) dataset.
 
